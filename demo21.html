@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Планіметрична Майстерня</title>
+
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-orbit-controls@1.3.0/dist/aframe-orbit-controls.min.js"></script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            font-family: Arial, sans-serif;
+        }
+        
+        #main-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #content-section {
+            flex: 1;
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        #controls {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 1000;
+            width: 320px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        #controls h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #444;
+        }
+        
+        input, button, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        #measurements {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f8f8;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 14px;
+        }
+        
+        .measurement-value {
+            font-weight: bold;
+            color: #006400;
+        }
+        
+        .error-message {
+            color: #d32f2f;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        #info-section {
+            padding: 30px;
+            margin-top: 100vh;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        .info-block {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .info-block h2, .info-block h3 {
+            color: #2c3e50;
+        }
+        
+        .side-input-group, .angle-input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .side-input-group label, .angle-input-group label {
+            flex: 1;
+            margin-bottom: 0;
+            font-size: 14px;
+        }
+        
+        .side-input-group input, .angle-input-group input {
+            flex: 2;
+            margin-bottom: 0;
+            padding: 6px;
+        }
+        
+        .remove-btn {
+            width: auto;
+            padding: 5px 10px;
+            margin-left: 8px;
+            background-color: #f44336;
+            font-size: 12px;
+        }
+        
+        .remove-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .polygon-info {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .slider-group label {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .slider-group input[type="range"] {
+            flex: 2;
+            margin-bottom: 0;
+            -webkit-appearance: none;
+            width: calc(100% - 70px);
+            height: 8px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+            border-radius: 5px;
+        }
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        .slider-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        .slider-value {
+            margin-left: 10px;
+            width: 40px;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        #proofSection {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid #c8e6c9;
+        }
+
+        #proofSection h4 {
+            color: #388e3c;
+            margin-top: 0;
+        }
+
+        #proofText {
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        #proofNavButtons {
+            display: flex;
+            justify-content: space-between;
+        }
+        #proofNavButtons button {
+            width: 48%;
+            margin-bottom: 0;
+        }
+        #proofNavButtons button:first-child {
+            margin-right: 4%;
+        }
+        .theorem-description {
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="main-container">
+        <div id="content-section">
+            <div id="controls">
+                <h3>Конструктор багатокутників</h3>
+                
+                <div class="control-group">
+                    <label for="polygonType">Тип багатокутника:</label>
+                    <select id="polygonType">
+                        <option value="regular">Правильний</option>
+                        <option value="custom">Кастомний</option>
+                    </select>
+                </div>
+                
+                <div id="regularControls" class="control-group">
+                    <label for="numSides">Кількість сторін:</label>
+                    <input type="number" id="numSides" min="3" max="10" value="4">
+                    
+                    <label for="size">Розмір сторони:</label>
+                    <input type="number" id="size" min="0.5" max="5" step="0.1" value="2">
+                    
+                    <div id="regularAnglesInfo"></div>
+                </div>
+                
+                <div id="customControls" class="control-group" style="display:none;">
+                    <p style="font-size:12px; color:#666;">
+                        Увага: для коректної побудови опуклого кастомного багатокутника сума всіх внутрішніх кутів має дорівнювати $(N-2) \times 180^\circ$.
+                        Ви можете змінювати N-1 сторону та N-1 кут. Останній кут буде розрахований автоматично.
+                    </p>
+                    <div id="sidesInputs"></div>
+                    <div id="anglesInputs"></div>
+                    <button id="addSide">Додати сторону</button>
+                    <button id="removeLastSide" style="background-color: #f44336;">Видалити останню сторону</button>
+                </div>
+                
+                <div class="control-group">
+                    <label for="fillColor">Колір заливки:</label>
+                    <input type="color" id="fillColor" value="#006400">
+                    
+                    <label for="lineColor">Колір контуру:</label>
+                    <input type="color" id="lineColor" value="#0000FF">
+                </div>
+                
+                <button id="updatePolygon">Створити багатокутник</button>
+                
+                <div class="control-group">
+                    <h4>Обертання фігури</h4>
+                    <div class="slider-group">
+                        <label for="rotateX">Оберт X:</label>
+                        <input type="range" id="rotateX" min="0" max="360" value="0" step="1">
+                        <span class="slider-value" id="rotateXValue">0°</span>
+                    </div>
+                    <div class="slider-group">
+                        <label for="rotateY">Оберт Y:</label>
+                        <input type="range" id="rotateY" min="0" max="360" value="0" step="1">
+                        <span class="slider-value" id="rotateYValue">0°</span>
+                    </div>
+                    <div class="slider-group">
+                        <label for="rotateZ">Оберт Z:</label>
+                        <input type="range" id="rotateZ" min="0" max="360" value="0" step="1">
+                        <span class="slider-value" id="rotateZValue">0°</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="showMeasurements" checked> Показувати виміри
+                    </label>
+                    <label>
+                        <input type="checkbox" id="highlightAngles"> Підсвічувати кути
+                    </label>
+                    <label>
+                        <input type="checkbox" id="draggingEnabled" checked> Дозволити перетягування фігури (перетягніть мишею після натискання на фігуру)
+                    </label>
+                    <label>
+                        <input type="checkbox" id="extraThickShape"> Додаткова товщина (як 3D об'єкт)
+                    </label>
+                </div>
+                
+                <div id="measurements"></div>
+
+                <div class="control-group" id="theoremsSection">
+                    <h3>Інтерактивні теореми</h3>
+                    <label for="theoremSelect">Оберіть теорему:</label>
+                    <select id="theoremSelect">
+                        <option value="">-- Оберіть --</option>
+                        <option value="triangleSumAngles">Сума кутів трикутника</option>
+                        <option value="externalAngleTriangle">Зовнішній кут трикутника</option>
+                        </select>
+
+                    <div id="proofSection" style="display: none;">
+                        <h4 id="theoremName"></h4>
+                        <p class="theorem-description" id="theoremDescription"></p>
+                        <div id="proofText"></div>
+                        <div id="proofNavButtons">
+                            <button id="prevStepBtn" disabled>Попередній крок</button>
+                            <button id="nextStepBtn">Наступний крок</button>
+                        </div>
+                        <button id="resetProofBtn" style="margin-top: 10px; background-color: #607d8b;">Почати доведення знову</button>
+                    </div>
+                </div>
+            </div>
+
+            <a-scene background="color: #ECECEC" cursor="rayOrigin: mouse" raycaster="objects: .draggable">
+                <a-entity camera position="0 0 5" look-controls="enabled: true" orbit-controls="target: 0 0 0; minDistance: 2; maxDistance: 10; initialPosition: 0 0 5">
+                    <a-entity cursor="fuse: true; fuseTimeout: 500"
+                              position="0 0 -1"
+                              geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                              material="color: black; shader: flat">
+                    </a-entity>
+                </a-entity>
+
+                <a-entity id="polygons-container"></a-entity>
+                <a-entity id="proof-elements-container"></a-entity> <a-plane rotation="-90 0 0" width="20" height="20" color="#7BC8A4" opacity="0.1"></a-plane>
+                
+                <a-light type="ambient" color="#FFFFFF" intensity="0.6"></a-light>
+                <a-light type="directional" color="#FFFFFF" intensity="0.5" position="-1 2 1"></a-light>
+                <a-light type="directional" color="#FFFFFF" intensity="0.4" position="1 2 -1"></a-light>
+            </a-scene>
+        </div>
+
+        <div id="info-section">
+            <div class="info-block">
+                <h2>Планіметрична Майстерня</h2>
+                <p>Цей інструмент дозволяє досліджувати властивості плоских фігур у 3D-просторі. Ви можете створювати різноманітні багатокутники, вимірювати їх параметри та вивчати геометричні закони.</p>
+            </div>
+            
+            <div class="info-block">
+                <h3>Як користуватися</h3>
+                <ol>
+                    <li><strong>Оберіть тип багатокутника</strong> (правильний або кастомний)</li>
+                    <li><strong>Вкажіть параметри</strong> (кількість сторін, розміри, кути)</li>
+                    <li><strong>Налаштуйте кольори</strong> та додаткові параметри</li>
+                    <li><strong>Натисніть "Створити багатокутник"</strong> для застосування змін</li>
+                    <li><strong>Використовуйте мишу</strong> для обертання камери (ліва кнопка) та переміщення фігури (ліва кнопка після кліку по фігурі)</li>
+                    <li><strong>Використовуйте слайдери</strong> для обертання самої фігури навколо осей X, Y, Z.</li>
+                </ol>
+            </div>
+            
+            <div class="info-block">
+                <h3>Теоретичні відомості</h3>
+                <p><strong>Планіметрія</strong> - це розділ геометрії, що вивчає властивості фігур на площині. Основними об'єктами дослідження є:</p>
+                <ul>
+                    <li><strong>Трикутники</strong> та їх властивості</li>
+                    <li><strong>Чотирикутники</strong> (квадрати, прямокутники, паралелограми)</li>
+                    <li><strong>Правильні та неправильні багатокутники</strong></li>
+                    <li><strong>Кола</strong> та їх властивості</li>
+                </ul>
+                <p>Для будь-якого опуклого n-кутника сума внутрішніх кутів дорівнює <strong>$180^\circ \times (n-2)$</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const scene = document.querySelector('a-scene');
+            const polygonsContainer = document.getElementById('polygons-container');
+            const proofElementsContainer = document.getElementById('proof-elements-container'); // Новий контейнер
+            const polygonTypeSelect = document.getElementById('polygonType');
+            const regularControls = document.getElementById('regularControls');
+            const customControls = document.getElementById('customControls');
+            const numSidesInput = document.getElementById('numSides');
+            const sizeInput = document.getElementById('size');
+            const fillColorInput = document.getElementById('fillColor');
+            const lineColorInput = document.getElementById('lineColor');
+            const showMeasurementsCheck = document.getElementById('showMeasurements');
+            const highlightAnglesCheck = document.getElementById('highlightAngles');
+            const draggingEnabledCheck = document.getElementById('draggingEnabled');
+            const extraThickShapeCheck = document.getElementById('extraThickShape');
+            const updateButton = document.getElementById('updatePolygon');
+            const addSideButton = document.getElementById('addSide');
+            const removeLastSideButton = document.getElementById('removeLastSide');
+            const sidesInputsContainer = document.getElementById('sidesInputs');
+            const anglesInputsContainer = document.getElementById('anglesInputs');
+            const measurementsOutput = document.getElementById('measurements');
+            const regularAnglesInfo = document.getElementById('regularAnglesInfo');
+            
+            const rotateXSlider = document.getElementById('rotateX');
+            const rotateYSlider = document.getElementById('rotateY');
+            const rotateZSlider = document.getElementById('rotateZ');
+            const rotateXValue = document.getElementById('rotateXValue');
+            const rotateYValue = document.getElementById('rotateYValue');
+            const rotateZValue = document.getElementById('rotateZValue');
+
+            // Теореми
+            const theoremSelect = document.getElementById('theoremSelect');
+            const proofSection = document.getElementById('proofSection');
+            const theoremName = document.getElementById('theoremName');
+            const theoremDescription = document.getElementById('theoremDescription');
+            const proofText = document.getElementById('proofText');
+            const prevStepBtn = document.getElementById('prevStepBtn');
+            const nextStepBtn = document.getElementById('nextStepBtn');
+            const resetProofBtn = document.getElementById('resetProofBtn');
+
+            let currentSidesCount = 4;
+            let customSides = [2, 2, 2, 2];
+            let customAngles = [90, 90, 90];
+            let polygonCount = 0;
+            
+            let currentTheorem = null;
+            let currentProofStep = -1;
+
+            // --- Теореми та їх доведення ---
+            const theorems = {
+                'triangleSumAngles': {
+                    name: 'Теорема про суму кутів трикутника',
+                    description: 'Сума внутрішніх кутів трикутника дорівнює $180^\circ$.',
+                    setup: function() {
+                        polygonTypeSelect.value = 'regular';
+                        numSidesInput.value = 3;
+                        sizeInput.value = 2.5;
+                        fillColorInput.value = '#ADD8E6'; // Буде переписано в highlightFn для візуального акценту
+                        lineColorInput.value = '#00008B'; // Буде переписано в highlightFn для візуального акценту
+                        showMeasurementsCheck.checked = false; 
+                        highlightAnglesCheck.checked = true;
+                        extraThickShapeCheck.checked = false;
+                        draggingEnabledCheck.checked = true;
+                        updatePolygon();
+                        scene.camera.el.setAttribute('orbit-controls', {initialPosition: '0 0 4', target: '0 0 0'});
+                        rotateXSlider.value = 0; rotateYSlider.value = 0; rotateZSlider.value = 0;
+                        updatePolygonRotation();
+                    },
+                    proofSteps: [
+                        {
+                            text: 'Розглянемо довільний трикутник ABC. Позначимо його внутрішні кути як $\\angle A$, $\\angle B$, $\\angle C$.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (!polygonEl) return;
+                                const pg = polygonEl.components['polygon-generator'];
+                                pg.dimPolygon(); // Затемнюємо полігон
+                                pg.addVertexLabel(0, 'A', '#000000'); // Чорний колір для міток
+                                pg.addVertexLabel(1, 'B', '#000000');
+                                pg.addVertexLabel(2, 'C', '#000000');
+                                pg.addAngleText(0, 'A', '#FF0000'); // Яскраві кольори для кутів
+                                pg.addAngleText(1, 'B', '#008000');
+                                pg.addAngleText(2, 'C', '#0000FF');
+                            }
+                        },
+                        {
+                            text: 'Проведемо через вершину B пряму $a$, паралельну стороні AC.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (!polygonEl) return;
+                                const pg = polygonEl.components['polygon-generator'];
+                                pg.dimPolygon();
+                                const vertices = pg.getVertices();
+                                if (vertices.length !== 3) return;
+
+                                const A = vertices[0];
+                                const B = vertices[1];
+                                const C = vertices[2];
+
+                                pg.addVertexLabel(0, 'A', '#000000');
+                                pg.addVertexLabel(1, 'B', '#000000');
+                                pg.addVertexLabel(2, 'C', '#000000');
+                                pg.addAngleText(0, 'A', '#FF0000');
+                                pg.addAngleText(1, 'B', '#008000');
+                                pg.addAngleText(2, 'C', '#0000FF');
+
+                                // Вектор AC
+                                const vecAC = new THREE.Vector2().subVectors(C, A);
+                                // Кут нахилу AC (для паралельної лінії)
+                                const angleACRad = vecAC.angle();
+                                
+                                // Проводимо лінію через B
+                                pg.addLineFromPoint(B, angleACRad, 6, 'red', 'proof-line-1', 'a');
+                            }
+                        },
+                        {
+                            text: 'Кут $\\angle DAB$ та кут $\\angle A$ (трикутника) є навхрест лежачими при паралельних прямих $a$ і $AC$ та січній $AB$. Отже, $\\angle DAB = \\angle A$.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (!polygonEl) return;
+                                const pg = polygonEl.components['polygon-generator'];
+                                pg.dimPolygon();
+                                const vertices = pg.getVertices();
+                                if (vertices.length !== 3) return;
+
+                                const A = vertices[0];
+                                const B = vertices[1];
+                                const C = vertices[2];
+
+                                pg.addVertexLabel(0, 'A', '#000000');
+                                pg.addVertexLabel(1, 'B', '#000000');
+                                pg.addVertexLabel(2, 'C', '#000000');
+                                
+                                // Повторно малюємо лінію
+                                const vecAC = new THREE.Vector2().subVectors(C, A);
+                                const angleACRad = vecAC.angle();
+                                pg.addLineFromPoint(B, angleACRad, 6, 'red', 'proof-line-1', 'a');
+
+                                pg.highlightAngle(0, '#FF0000'); // Кут A
+                                pg.addAngleText(0, 'A', '#FF0000');
+
+                                // Візуалізуємо навхрест лежачий кут біля B
+                                const vBA = new THREE.Vector2().subVectors(A, B);
+                                pg.drawAngleArc(B, angleACRad, vBA.angle(), 0.15, '#FF0000', 'A'); // Кут DAB (зліва від B)
+                            }
+                        },
+                        {
+                            text: 'Аналогічно, кут $\\angle ECB$ та кут $\\angle C$ (трикутника) є навхрест лежачими при паралельних прямих $a$ і $AC$ та січній $BC$. Отже, $\\angle ECB = \\angle C$.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (!polygonEl) return;
+                                const pg = polygonEl.components['polygon-generator'];
+                                pg.dimPolygon();
+                                const vertices = pg.getVertices();
+                                if (vertices.length !== 3) return;
+
+                                const A = vertices[0];
+                                const B = vertices[1];
+                                const C = vertices[2];
+
+                                pg.addVertexLabel(0, 'A', '#000000');
+                                pg.addVertexLabel(1, 'B', '#000000');
+                                pg.addVertexLabel(2, 'C', '#000000');
+                                
+                                const vecAC = new THREE.Vector2().subVectors(C, A);
+                                const angleACRad = vecAC.angle();
+                                pg.addLineFromPoint(B, angleACRad, 6, 'red', 'proof-line-1', 'a');
+
+                                pg.highlightAngle(2, '#0000FF'); // Кут C
+                                pg.addAngleText(2, 'C', '#0000FF');
+
+                                // Візуалізуємо навхрест лежачий кут біля B
+                                const vBC = new THREE.Vector2().subVectors(C, B);
+                                pg.drawAngleArc(B, vBC.angle(), angleACRad + Math.PI, 0.15, '#0000FF', 'C'); // Кут ECB (справа від B)
+                            }
+                        },
+                        {
+                            text: 'Кути $\\angle DAB$, $\\angle ABC$ та $\\angle ECB$ утворюють розгорнутий кут на прямій $a$. Сума розгорнутого кута дорівнює $180^\circ$.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (!polygonEl) return;
+                                const pg = polygonEl.components['polygon-generator'];
+                                pg.dimPolygon();
+                                const vertices = pg.getVertices();
+                                if (vertices.length !== 3) return;
+
+                                const A = vertices[0];
+                                const B = vertices[1];
+                                const C = vertices[2];
+
+                                pg.addVertexLabel(0, 'A', '#000000');
+                                pg.addVertexLabel(1, 'B', '#000000');
+                                pg.addVertexLabel(2, 'C', '#000000');
+
+                                const vecAC = new THREE.Vector2().subVectors(C, A);
+                                const angleACRad = vecAC.angle();
+                                pg.addLineFromPoint(B, angleACRad, 6, 'red', 'proof-line-1', 'a');
+
+                                // Підсвічуємо всі три кути біля B, які утворюють розгорнутий кут
+                                const vBA = new THREE.Vector2().subVectors(A, B);
+                                const vBC = new THREE.Vector2().subVectors(C, B);
+
+                                // Кут A (навхрест лежачий до A)
+                                pg.drawAngleArc(B, angleACRad, vBA.angle(), 0.15, '#FF0000', 'A');
+                                // Кут B (кут B трикутника)
+                                pg.drawAngleArc(B, vBA.angle(), vBC.angle(), 0.15, '#008000', 'B');
+                                // Кут C (навхрест лежачий до C)
+                                pg.drawAngleArc(B, vBC.angle(), angleACRad + Math.PI, 0.15, '#0000FF', 'C');
+                            }
+                        },
+                        {
+                            text: 'Звідси випливає, що $\\angle A + \\angle B + \\angle C = 180^\circ$.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (!polygonEl) return;
+                                const pg = polygonEl.components['polygon-generator'];
+                                pg.dimPolygon();
+                                pg.addVertexLabel(0, 'A', '#000000');
+                                pg.addVertexLabel(1, 'B', '#000000');
+                                pg.addVertexLabel(2, 'C', '#000000');
+                                pg.addAngleText(0, 'A', '#FF0000');
+                                pg.addAngleText(1, 'B', '#008000');
+                                pg.addAngleText(2, 'C', '#0000FF');
+                                pg.highlightAngle(0, '#FF0000');
+                                pg.highlightAngle(1, '#008000');
+                                pg.highlightAngle(2, '#0000FF');
+                            }
+                        },
+                        {
+                            text: 'Доведення завершено. Сума внутрішніх кутів трикутника дорівнює $180^\circ$.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (polygonEl) {
+                                    polygonEl.components['polygon-generator'].restorePolygon(); // Відновлюємо полігон
+                                }
+                            }
+                        }
+                    ]
+                },
+                'externalAngleTriangle': {
+                    name: 'Теорема про зовнішній кут трикутника',
+                    description: 'Зовнішній кут трикутника дорівнює сумі двох внутрішніх кутів трикутника, не суміжних з ним.',
+                    setup: function() {
+                        polygonTypeSelect.value = 'regular';
+                        numSidesInput.value = 3;
+                        sizeInput.value = 2.5;
+                        fillColorInput.value = '#D8BFD8'; 
+                        lineColorInput.value = '#4B0082'; 
+                        showMeasurementsCheck.checked = false;
+                        highlightAnglesCheck.checked = true;
+                        extraThickShapeCheck.checked = false;
+                        draggingEnabledCheck.checked = true;
+                        updatePolygon();
+                        scene.camera.el.setAttribute('orbit-controls', {initialPosition: '0 0 4', target: '0 0 0'});
+                        rotateXSlider.value = 0; rotateYSlider.value = 0; rotateZSlider.value = 0;
+                        updatePolygonRotation();
+                    },
+                    proofSteps: [
+                        {
+                            text: 'Крок 1: Розглянемо довільний трикутник ABC. Продовжимо сторону AC за точку C, утворивши зовнішній кут $\\angle BCD$.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (!polygonEl) return;
+                                const pg = polygonEl.components['polygon-generator'];
+                                pg.dimPolygon();
+                                const vertices = pg.getVertices();
+                                if (vertices.length !== 3) return;
+
+                                const A = vertices[0];
+                                const B = vertices[1];
+                                const C = vertices[2];
+
+                                pg.addVertexLabel(0, 'A', '#000000');
+                                pg.addVertexLabel(1, 'B', '#000000');
+                                pg.addVertexLabel(2, 'C', '#000000');
+
+                                // Продовжуємо сторону AC
+                                const vecCA = new THREE.Vector2().subVectors(A, C);
+                                const angleCA = vecCA.angle();
+                                const D = new THREE.Vector2(C.x + 2 * Math.cos(angleCA), C.y + 2 * Math.sin(angleCA)); // Збільшив довжину продовження
+                                pg.addLineBetweenPoints(C, D, '#4169E1', 'proof-line-extension', 'AC продовження'); // RoyalBlue
+                                pg.addVertexLabel(D, 'D', '#4169E1');
+
+                                // Зовнішній кут
+                                const vecCB = new THREE.Vector2().subVectors(B, C);
+                                pg.drawAngleArc(C, vecCB.angle(), angleCA + Math.PI, 0.2, '#32CD32', 'θ'); // LimeGreen
+                            }
+                        },
+                        {
+                            text: 'Крок 2: Кут $\\angle BCD$ та внутрішній кут $\\angle C$ є суміжними. Їх сума дорівнює $180^\circ$: $\\angle BCD + \\angle C = 180^\circ$.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (!polygonEl) return;
+                                const pg = polygonEl.components['polygon-generator'];
+                                pg.dimPolygon();
+                                const vertices = pg.getVertices();
+                                if (vertices.length !== 3) return;
+
+                                const A = vertices[0];
+                                const B = vertices[1];
+                                const C = vertices[2];
+
+                                pg.addVertexLabel(0, 'A', '#000000');
+                                pg.addVertexLabel(1, 'B', '#000000');
+                                pg.addVertexLabel(2, 'C', '#000000');
+
+                                const vecCA = new THREE.Vector2().subVectors(A, C);
+                                const angleCA = vecCA.angle();
+                                const D = new THREE.Vector2(C.x + 2 * Math.cos(angleCA), C.y + 2 * Math.sin(angleCA));
+                                pg.addLineBetweenPoints(C, D, '#4169E1', 'proof-line-extension', 'AC продовження');
+                                pg.addVertexLabel(D, 'D', '#4169E1');
+
+                                pg.highlightAngle(2, '#FF4500'); // OrangeRed
+                                pg.addAngleText(2, 'C', '#FF4500');
+
+                                const vecCB = new THREE.Vector2().subVectors(B, C);
+                                pg.drawAngleArc(C, vecCB.angle(), angleCA + Math.PI, 0.2, '#32CD32', 'θ'); // LimeGreen
+                            }
+                        },
+                        {
+                            text: 'Крок 3: За теоремою про суму кутів трикутника: $\\angle A + \\angle B + \\angle C = 180^\circ$.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (!polygonEl) return;
+                                const pg = polygonEl.components['polygon-generator'];
+                                pg.dimPolygon();
+                                const vertices = pg.getVertices();
+                                if (vertices.length !== 3) return;
+
+                                const A = vertices[0];
+                                const B = vertices[1];
+                                const C = vertices[2];
+
+                                pg.addVertexLabel(0, 'A', '#000000');
+                                pg.addVertexLabel(1, 'B', '#000000');
+                                pg.addVertexLabel(2, 'C', '#000000');
+
+                                const vecCA = new THREE.Vector2().subVectors(A, C);
+                                const angleCA = vecCA.angle();
+                                const D = new THREE.Vector2(C.x + 2 * Math.cos(angleCA), C.y + 2 * Math.sin(angleCA));
+                                pg.addLineBetweenPoints(C, D, '#4169E1', 'proof-line-extension', 'AC продовження');
+                                pg.addVertexLabel(D, 'D', '#4169E1');
+
+                                // Підсвічуємо всі внутрішні кути
+                                pg.highlightAngle(0, '#FF0000');
+                                pg.highlightAngle(1, '#008000');
+                                pg.highlightAngle(2, '#0000FF');
+                                pg.addAngleText(0, 'A', '#FF0000');
+                                pg.addAngleText(1, 'B', '#008000');
+                                pg.addAngleText(2, 'C', '#0000FF');
+                            }
+                        },
+                        {
+                            text: 'Крок 4: З попередніх кроків маємо: $\\angle BCD = 180^\circ - \\angle C$ та $\\angle A + \\angle B = 180^\circ - \\angle C$.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (!polygonEl) return;
+                                const pg = polygonEl.components['polygon-generator'];
+                                pg.dimPolygon();
+                                const vertices = pg.getVertices();
+                                if (vertices.length !== 3) return;
+
+                                const A = vertices[0];
+                                const B = vertices[1];
+                                const C = vertices[2];
+
+                                pg.addVertexLabel(0, 'A', '#000000');
+                                pg.addVertexLabel(1, 'B', '#000000');
+                                pg.addVertexLabel(2, 'C', '#000000');
+
+                                const vecCA = new THREE.Vector2().subVectors(A, C);
+                                const angleCA = vecCA.angle();
+                                const D = new THREE.Vector2(C.x + 2 * Math.cos(angleCA), C.y + 2 * Math.sin(angleCA));
+                                pg.addLineBetweenPoints(C, D, '#4169E1', 'proof-line-extension', 'AC продовження');
+                                pg.addVertexLabel(D, 'D', '#4169E1');
+
+                                // Підсвічуємо A, B, і зовнішній кут
+                                pg.highlightAngle(0, '#FF0000');
+                                pg.highlightAngle(1, '#008000');
+                                pg.addAngleText(0, 'A', '#FF0000');
+                                pg.addAngleText(1, 'B', '#008000');
+
+                                const vecCB = new THREE.Vector2().subVectors(B, C);
+                                pg.drawAngleArc(C, vecCB.angle(), angleCA + Math.PI, 0.2, '#32CD32', 'θ'); // LimeGreen
+                            }
+                        },
+                        {
+                            text: 'Крок 5: Звідси випливає, що $\\angle BCD = \\angle A + \\angle B$.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (!polygonEl) return;
+                                const pg = polygonEl.components['polygon-generator'];
+                                pg.dimPolygon();
+                                const vertices = pg.getVertices();
+                                if (vertices.length !== 3) return;
+
+                                const A = vertices[0];
+                                const B = vertices[1];
+                                const C = vertices[2];
+
+                                pg.addVertexLabel(0, 'A', '#000000');
+                                pg.addVertexLabel(1, 'B', '#000000');
+                                pg.addVertexLabel(2, 'C', '#000000');
+
+                                const vecCA = new THREE.Vector2().subVectors(A, C);
+                                const angleCA = vecCA.angle();
+                                const D = new THREE.Vector2(C.x + 2 * Math.cos(angleCA), C.y + 2 * Math.sin(angleCA));
+                                pg.addLineBetweenPoints(C, D, '#4169E1', 'proof-line-extension', 'AC продовження');
+                                pg.addVertexLabel(D, 'D', '#4169E1');
+
+                                pg.highlightAngle(0, '#FF0000'); // Кут A
+                                pg.highlightAngle(1, '#008000'); // Кут B
+                                pg.addAngleText(0, 'A', '#FF0000');
+                                pg.addAngleText(1, 'B', '#008000');
+
+                                const vecCB = new THREE.Vector2().subVectors(B, C);
+                                pg.drawAngleArc(C, vecCB.angle(), angleCA + Math.PI, 0.2, '#32CD32', 'θ'); // LimeGreen
+                            }
+                        },
+                        {
+                            text: 'Доведення завершено. Зовнішній кут трикутника дорівнює сумі двох внутрішніх кутів трикутника, не суміжних з ним.',
+                            highlightFn: function() {
+                                clearProofElements();
+                                const polygonEl = polygonsContainer.querySelector('a-entity');
+                                if (polygonEl) {
+                                    polygonEl.components['polygon-generator'].restorePolygon(); // Відновлюємо полігон
+                                }
+                            }
+                        }
+                    ]
+                }
+            };
+            // --- Кінець теорем ---
+
+            // Функція для очищення всіх допоміжних елементів доведення
+            function clearProofElements() {
+                // Очищаємо підсвічування та тексти кутів основного багатокутника
+                const currentPolygon = polygonsContainer.querySelector('a-entity');
+                if (currentPolygon && currentPolygon.components['polygon-generator']) {
+                    currentPolygon.components['polygon-generator'].clearAngleHighlights();
+                    currentPolygon.components['polygon-generator'].clearAngleTexts();
+                    currentPolygon.components['polygon-generator'].clearVertexLabels();
+                }
+                // Очищаємо всі допоміжні елементи з proof-elements-container
+                proofElementsContainer.innerHTML = '';
+            }
+
+            theoremSelect.addEventListener('change', function() {
+                const theoremKey = this.value;
+                if (theoremKey && theorems[theoremKey]) {
+                    currentTheorem = theorems[theoremKey];
+                    proofSection.style.display = 'block';
+                    theoremName.textContent = currentTheorem.name;
+                    theoremDescription.innerHTML = currentTheorem.description;
+                    
+                    currentProofStep = -1; // Починаємо перед першим кроком
+                    goToProofStep(0); // Переходимо до першого кроку
+                    
+                    // Відключаємо конструктор
+                    toggleConstructorControls(false);
+
+                } else {
+                    proofSection.style.display = 'none';
+                    currentTheorem = null;
+                    currentProofStep = -1;
+                    clearProofElements(); // Очищаємо все
+                    toggleConstructorControls(true); // Включаємо конструктор
+                    createPolygon(); // Відновлюємо багатокутник за замовчуванням
+                }
+            });
+
+            nextStepBtn.addEventListener('click', function() {
+                if (currentTheorem && currentProofStep < currentTheorem.proofSteps.length - 1) {
+                    goToProofStep(currentProofStep + 1);
+                }
+            });
+
+            prevStepBtn.addEventListener('click', function() {
+                if (currentTheorem && currentProofStep > 0) {
+                    goToProofStep(currentProofStep - 1);
+                }
+            });
+
+            resetProofBtn.addEventListener('click', function() {
+                if (currentTheorem) {
+                    goToProofStep(0);
+                }
+            });
+
+            function goToProofStep(stepIndex) {
+                if (!currentTheorem || stepIndex < 0 || stepIndex >= currentTheorem.proofSteps.length) {
+                    return;
+                }
+                
+                currentProofStep = stepIndex;
+                const step = currentTheorem.proofSteps[currentProofStep];
+                
+                proofText.textContent = `Крок ${currentProofStep + 1}: ${step.text}`;
+                
+                // Викликаємо функцію налаштування сцени для цієї теореми
+                currentTheorem.setup();
+
+                // Викликаємо функцію підсвічування для поточного кроку
+                if (step.highlightFn) {
+                    // Переконайтеся, що MathJax обробляє новий текст
+                    proofText.innerHTML = `Крок ${currentProofStep + 1}: ${step.text}`;
+                    MathJax.typesetPromise([proofText]).then(() => {
+                        // Виконайте highlightFn після рендерингу MathJax
+                        step.highlightFn();
+                    });
+                } else {
+                    // Якщо highlightFn відсутня, просто оновіть текст і очистіть елементи
+                    proofText.innerHTML = `Крок ${currentProofStep + 1}: ${step.text}`;
+                    MathJax.typesetPromise([proofText]);
+                    clearProofElements();
+                }
+
+                prevStepBtn.disabled = (currentProofStep === 0);
+                nextStepBtn.disabled = (currentProofStep === currentTheorem.proofSteps.length - 1);
+            }
+
+            function toggleConstructorControls(enable) {
+                const controls = [
+                    polygonTypeSelect, numSidesInput, sizeInput, fillColorInput, lineColorInput,
+                    updateButton, addSideButton, removeLastSideButton
+                ];
+                controls.forEach(control => {
+                    control.disabled = !enable;
+                    control.parentElement.style.pointerEvents = enable ? 'auto' : 'none'; 
+                    control.style.opacity = enable ? '1' : '0.6';
+                });
+                // Залежні елементи
+                if (polygonTypeSelect.value === 'regular') {
+                    regularControls.style.pointerEvents = enable ? 'auto' : 'none';
+                    customControls.style.pointerEvents = 'none';
+                } else {
+                    regularControls.style.pointerEvents = 'none';
+                    customControls.style.pointerEvents = enable ? 'auto' : 'none';
+                }
+                // Чекбокси
+                showMeasurementsCheck.disabled = !enable;
+                highlightAnglesCheck.disabled = !enable;
+                draggingEnabledCheck.disabled = !enable;
+                extraThickShapeCheck.disabled = !enable;
+
+                // Слайдери обертання
+                rotateXSlider.disabled = !enable;
+                rotateYSlider.disabled = !enable;
+                rotateZSlider.disabled = !enable;
+            }
+
+
+            // Ініціалізація
+            updateRegularAnglesInfo();
+            updateSideAndAngleInputs(currentSidesCount);
+            
+            // Обробники подій
+            polygonTypeSelect.addEventListener('change', function() {
+                if (this.value === 'regular') {
+                    regularControls.style.display = 'block';
+                    customControls.style.display = 'none';
+                    updateRegularAnglesInfo();
+                } else {
+                    regularControls.style.display = 'none';
+                    customControls.style.display = 'block';
+                    updateSideAndAngleInputs(currentSidesCount);
+                }
+                // При зміні типу багатокутника, вимикаємо режим теорем
+                theoremSelect.value = '';
+                theoremSelect.dispatchEvent(new Event('change'));
+            });
+            
+            numSidesInput.addEventListener('change', function() {
+                currentSidesCount = parseInt(this.value);
+                if (polygonTypeSelect.value === 'regular') {
+                    updateRegularAnglesInfo();
+                } else {
+                    while (customSides.length < currentSidesCount) {
+                        customSides.push(1);
+                    }
+                    while (customSides.length > currentSidesCount) {
+                        customSides.pop();
+                    }
+
+                    while (customAngles.length < currentSidesCount - 1) {
+                        customAngles.push(90);
+                    }
+                    while (customAngles.length > currentSidesCount - 1) {
+                        customAngles.pop();
+                    }
+                    updateSideAndAngleInputs(currentSidesCount);
+                }
+                // При зміні параметрів багатокутника, вимикаємо режим теорем
+                theoremSelect.value = '';
+                theoremSelect.dispatchEvent(new Event('change'));
+            });
+            
+            addSideButton.addEventListener('click', function() {
+                if (currentSidesCount < 10) {
+                    currentSidesCount++;
+                    numSidesInput.value = currentSidesCount;
+                    customSides.push(1);
+                    if (currentSidesCount > 3) {
+                        customAngles.push(90);
+                    }
+                    updateSideAndAngleInputs(currentSidesCount);
+                }
+                theoremSelect.value = '';
+                theoremSelect.dispatchEvent(new Event('change'));
+            });
+
+            removeLastSideButton.addEventListener('click', function() {
+                if (currentSidesCount > 3) {
+                    currentSidesCount--;
+                    numSidesInput.value = currentSidesCount;
+                    customSides.pop();
+                    if (customAngles.length > currentSidesCount - 1) {
+                         customAngles.pop();
+                    }
+                    updateSideAndAngleInputs(currentSidesCount);
+                }
+                theoremSelect.value = '';
+                theoremSelect.dispatchEvent(new Event('change'));
+            });
+            
+            updateButton.addEventListener('click', createPolygon);
+
+            rotateXSlider.addEventListener('input', updatePolygonRotation);
+            rotateYSlider.addEventListener('input', updatePolygonRotation);
+            rotateZSlider.addEventListener('input', updatePolygonRotation);
+            
+            function updatePolygonRotation() {
+                const rotationX = rotateXSlider.value;
+                const rotationY = rotateYSlider.value;
+                const rotationZ = rotateZSlider.value;
+                polygonsContainer.setAttribute('rotation', `${rotationX} ${rotationY} ${rotationZ}`);
+                rotateXValue.textContent = `${rotationX}°`;
+                rotateYValue.textContent = `${rotationY}°`;
+                rotateZValue.textContent = `${rotationZ}°`;
+            }
+
+            // Функція для оновлення інформації про кути правильного багатокутника
+            function updateRegularAnglesInfo() {
+                const sides = parseInt(numSidesInput.value);
+                const angle = ((sides - 2) * 180) / sides;
+                regularAnglesInfo.innerHTML = `
+                    <label>Властивості правильного багатокутника:</label>
+                    <div style="padding: 8px; background: #f0f0f0; border-radius: 4px; font-size: 14px;">
+                        <div>Кожен внутрішній кут: <span class="measurement-value">${angle.toFixed(2)}°</span></div>
+                        <div>Сума внутрішніх кутів: <span class="measurement-value">${((sides - 2) * 180).toFixed(2)}°</span></div>
+                        <div>Центральний кут: <span class="measurement-value">${(360/sides).toFixed(2)}°</span></div>
+                    </div>
+                `;
+            }
+            
+            // Функція для оновлення полів вводу сторін і кутів
+            function updateSideAndAngleInputs(numSides) {
+                sidesInputsContainer.innerHTML = '';
+                anglesInputsContainer.innerHTML = '';
+                
+                while (customSides.length < numSides) {
+                    customSides.push(1);
+                }
+                while (customSides.length > numSides) {
+                    customSides.pop();
+                }
+
+                while (customAngles.length < numSides - 1) {
+                    customAngles.push(90);
+                }
+                while (customAngles.length > numSides - 1) {
+                    customAngles.pop();
+                }
+
+                for (let i = 0; i < numSides; i++) {
+                    const sideDiv = document.createElement('div');
+                    sideDiv.className = 'side-input-group';
+                    
+                    sideDiv.innerHTML = `
+                        <label for="side${i}">Сторона ${i+1}:</label>
+                        <input type="number" id="side${i}" min="0.1" max="10" step="0.1" value="${customSides[i].toFixed(1)}">
+                    `;
+                    sidesInputsContainer.appendChild(sideDiv);
+                }
+                
+                for (let i = 0; i < numSides - 1; i++) {
+                    const angleDiv = document.createElement('div');
+                    angleDiv.className = 'angle-input-group';
+                    
+                    angleDiv.innerHTML = `
+                        <label for="angle${i}">Кут ${i+1} (внутр.):</label>
+                        <input type="number" id="angle${i}" min="1" max="179" value="${customAngles[i].toFixed(0)}">
+                    `;
+                    anglesInputsContainer.appendChild(angleDiv);
+                }
+            }
+            
+            // Функція для створення нового багатокутника
+            function createPolygon() {
+                polygonsContainer.innerHTML = '';
+                
+                const numSides = parseInt(numSidesInput.value);
+                const size = parseFloat(sizeInput.value);
+                const fillColor = fillColorInput.value;
+                const lineColor = lineColorInput.value;
+                const showMeasurements = showMeasurementsCheck.checked;
+                const highlightAngles = highlightAnglesCheck.checked;
+                const draggingEnabled = draggingEnabledCheck.checked;
+                const extraThickShape = extraThickShapeCheck.checked;
+                
+                const polygonId = `polygon-${polygonCount++}`;
+                const polygonEntity = document.createElement('a-entity');
+                polygonEntity.setAttribute('id', polygonId);
+                polygonEntity.setAttribute('class', 'draggable');
+                
+                if (polygonTypeSelect.value === 'custom') {
+                    customSides = [];
+                    customAngles = [];
+                    
+                    for (let i = 0; i < numSides; i++) {
+                        const sideInput = document.getElementById(`side${i}`);
+                        if (sideInput) customSides.push(parseFloat(sideInput.value));
+                    }
+                    
+                    for (let i = 0; i < numSides - 1; i++) {
+                        const angleInput = document.getElementById(`angle${i}`);
+                        if (angleInput) customAngles.push(parseFloat(angleInput.value));
+                    }
+
+                    const requiredAngleSum = (numSides - 2) * 180;
+                    const currentAnglesSum = customAngles.reduce((sum, val) => sum + val, 0);
+                    let lastAngle = requiredAngleSum - currentAnglesSum;
+                    
+                    if (lastAngle <= 0 || lastAngle >= 180 || isNaN(lastAngle)) {
+                         measurementsOutput.innerHTML = `<div class="error-message">Помилка: Неможливо побудувати опуклий багатокутник з заданими кутами. Сума кутів не відповідає або призводить до некоректного кута.</div>`;
+                         return;
+                    }
+                    customAngles.push(lastAngle);
+                    
+                    polygonEntity.setAttribute('polygon-generator', {
+                        numSides: numSides,
+                        customSides: customSides,
+                        customAngles: customAngles,
+                        fillColor: fillColor,
+                        lineColor: lineColor,
+                        showMeasurements: showMeasurements,
+                        highlightAngles: highlightAngles,
+                        extraThickShape: extraThickShape
+                    });
+                } else {
+                    polygonEntity.setAttribute('polygon-generator', {
+                        numSides: numSides,
+                        size: size,
+                        fillColor: fillColor,
+                        lineColor: lineColor,
+                        showMeasurements: showMeasurements,
+                        highlightAngles: highlightAngles,
+                        extraThickShape: extraThickShape
+                    });
+                }
+                
+                if (draggingEnabled) {
+                    polygonEntity.setAttribute('draggable', '');
+                }
+                
+                polygonsContainer.appendChild(polygonEntity);
+                
+                updateMeasurements(numSides);
+                updatePolygonRotation();
+            }
+            
+            // Функція для оновлення вимірів
+            function updateMeasurements(numSides) {
+                if (polygonTypeSelect.value === 'regular') {
+                    const size = parseFloat(sizeInput.value);
+                    const angle = ((numSides - 2) * 180) / numSides;
+                    const perimeter = numSides * size;
+                    const radius = size / (2 * Math.sin(Math.PI / numSides));
+                    const apothem = radius * Math.cos(Math.PI / numSides);
+                    const area = 0.5 * perimeter * apothem;
+
+                    measurementsOutput.innerHTML = `
+                        <div class="polygon-info">Правильний ${numSides}-кутник:</div>
+                        <div>- Кількість сторін: <span class="measurement-value">${numSides}</span></div>
+                        <div>- Довжина сторони: <span class="measurement-value">${size.toFixed(2)}</span></div>
+                        <div>- Внутрішній кут: <span class="measurement-value">${angle.toFixed(2)}°</span></div>
+                        <div>- Периметр: <span class="measurement-value">${perimeter.toFixed(2)}</span></div>
+                        <div>- Площа: <span class="measurement-value">${area.toFixed(2)}</span></div>
+                    `;
+                } else {
+                    let perimeter = 0;
+                    let anglesSum = 0;
+                    
+                    customSides.forEach(side => perimeter += side);
+                    customAngles.forEach(angle => anglesSum += angle);
+
+                    const requiredAngleSum = (numSides - 2) * 180;
+                    
+                    measurementsOutput.innerHTML = `
+                        <div class="polygon-info">Кастомний багатокутник:</div>
+                        <div>- Кількість сторін: <span class="measurement-value">${numSides}</span></div>
+                        <div>- Сторони: <span class="measurement-value">${customSides.map(s => s.toFixed(2)).join(', ')}</span></div>
+                        <div>- Кути (внутр.): <span class="measurement-value">${customAngles.map(a => a.toFixed(2) + '°').join(', ')}</span></div>
+                        <div>- Сума кутів: <span class="measurement-value">${anglesSum.toFixed(2)}°</span> (має бути <span class="measurement-value">${requiredAngleSum.toFixed(2)}°</span>)</div>
+                        <div>- Периметр: <span class="measurement-value">${perimeter.toFixed(2)}</span></div>
+                        <div id="customArea"></div>
+                    `;
+
+                    if (Math.abs(anglesSum - requiredAngleSum) > 0.01) {
+                        measurementsOutput.innerHTML += `<div class="error-message">Попередження: Сума кутів не відповідає вимогам для опуклого ${numSides}-кутника. Фігура може бути некоректною або самоперетинною.</div>`;
+                    }
+                }
+            }
+            
+            // Реєстрація компонента для генерації багатокутників
+            AFRAME.registerComponent('polygon-generator', {
+                schema: {
+                    numSides: {type: 'number', default: 4},
+                    size: {type: 'number', default: 1},
+                    customSides: {type: 'array', default: []},
+                    customAngles: {type: 'array', default: []},
+                    fillColor: {type: 'color', default: '#006400'},
+                    lineColor: {type: 'color', default: '#0000FF'},
+                    showMeasurements: {type: 'boolean', default: true},
+                    highlightAngles: {type: 'boolean', default: false},
+                    extraThickShape: {type: 'boolean', default: false}
+                },
+                
+                init: function() {
+                    this.vertices = [];
+                    this.angleHighlightEntities = [];
+                    this.angleTextEntities = [];
+                    this.vertexLabelEntities = []; 
+                    this.proofLines = []; 
+                    this.originalFillColor = this.data.fillColor; // Зберігаємо початковий колір
+                    this.originalLineColor = this.data.lineColor; // Зберігаємо початковий колір
+                    this.createPolygon();
+                },
+                
+                update: function() {
+                    // Оновлюємо оригінальні кольори тільки якщо вони не були встановлені раніше (тобто при першому рендері або зміні параметрів)
+                    if (this.originalFillColor === this.data.fillColor && this.originalLineColor === this.data.lineColor) {
+                        // Це означає, що колір не змінився через setup теореми, тому оновлюємо оригінальні
+                        this.originalFillColor = this.data.fillColor;
+                        this.originalLineColor = this.data.lineColor;
+                    }
+                    this.createPolygon();
+                },
+                
+                remove: function() {
+                    this.clearAngleHighlights();
+                    this.clearAngleTexts();
+                    this.clearVertexLabels();
+                    this.clearProofLines();
+                },
+
+                getVertices: function() {
+                    return this.vertices;
+                },
+
+                clearAngleHighlights: function() {
+                    this.angleHighlightEntities.forEach(entity => entity.remove());
+                    this.angleHighlightEntities = [];
+                },
+                clearAngleTexts: function() {
+                    this.angleTextEntities.forEach(entity => entity.remove());
+                    this.angleTextEntities = [];
+                },
+                clearVertexLabels: function() {
+                    this.vertexLabelEntities.forEach(entity => entity.remove());
+                    this.vertexLabelEntities = [];
+                },
+                clearProofLines: function() {
+                    this.proofLines.forEach(entity => entity.remove());
+                    this.proofLines = [];
+                },
+
+                // Зміна кольору полігону для підсвічування елементів доведення
+                dimPolygon: function() {
+                    const mesh = this.el.getObject3D('mesh');
+                    if (mesh && mesh.children.length > 0) {
+                        mesh.children[0].material.color.set('#D3D3D3'); // Сірий колір
+                        mesh.children[0].material.opacity = 0.6; // Зменшена прозорість
+                        mesh.children[1].material.color.set('#A9A9A9'); // Темно-сірий контур
+                    }
+                },
+
+                // Відновлення оригінального вигляду полігону
+                restorePolygon: function() {
+                    const mesh = this.el.getObject3D('mesh');
+                    if (mesh && mesh.children.length > 0) {
+                        mesh.children[0].material.color.set(this.originalFillColor);
+                        mesh.children[0].material.opacity = 0.95; 
+                        mesh.children[1].material.color.set(this.originalLineColor);
+                    }
+                },
+
+                highlightAngle: function(angleIndex, color) {
+                    if (!this.data.highlightAngles || angleIndex < 0 || angleIndex >= this.vertices.length) {
+                        return;
+                    }
+
+                    const current = this.vertices[angleIndex];
+                    const prev = this.vertices[(angleIndex - 1 + this.vertices.length) % this.vertices.length];
+                    const next = this.vertices[(angleIndex + 1) % this.vertices.length];
+
+                    const v1 = new THREE.Vector2().subVectors(prev, current);
+                    const v2 = new THREE.Vector2().subVectors(next, current);
+
+                    let angleRad = v2.angle() - v1.angle();
+                    if (angleRad < 0) angleRad += 2 * Math.PI;
+
+                    const angleArc = document.createElement('a-entity');
+                    angleArc.setAttribute('geometry', {
+                        primitive: 'ring',
+                        radiusInner: 0.1,
+                        radiusOuter: 0.18, // Збільшена товщина дуги
+                        thetaStart: THREE.MathUtils.radToDeg(v1.angle()),
+                        thetaLength: THREE.MathUtils.radToDeg(angleRad)
+                    });
+                    angleArc.setAttribute('material', `color: ${color}; opacity: 0.7;`); // Збільшена прозорість
+                    angleArc.setAttribute('position', `${current.x} 0.03 ${current.y}`); // Збільшений Z-офсет
+                    angleArc.setAttribute('rotation', '-90 0 0');
+                    this.el.appendChild(angleArc);
+                    this.angleHighlightEntities.push(angleArc);
+                },
+
+                addAngleText: function(angleIndex, textValue, color) {
+                    if (angleIndex < 0 || angleIndex >= this.vertices.length) {
+                        return;
+                    }
+
+                    const current = this.vertices[angleIndex];
+                    const prev = this.vertices[(angleIndex - 1 + this.vertices.length) % this.vertices.length];
+                    const next = this.vertices[(angleIndex + 1) % this.vertices.length];
+
+                    const v1 = new THREE.Vector2().subVectors(prev, current).normalize();
+                    const v2 = new THREE.Vector2().subVectors(next, current).normalize();
+                    
+                    const bisector = new THREE.Vector2().addVectors(v1, v2).normalize();
+                    if (bisector.length() < 0.001) { 
+                        bisector.set(v1.y, -v1.x); 
+                    }
+
+                    const textRadius = 0.3; // Відстань тексту від вершини
+                    const textX = current.x + textRadius * bisector.x;
+                    const textY = current.y + textRadius * bisector.y;
+
+                    const textEntity = document.createElement('a-entity');
+                    textEntity.setAttribute('text', {
+                        value: textValue,
+                        align: 'center',
+                        color: color,
+                        width: 0.6, // Збільшена ширина тексту
+                        wrapCount: 10
+                    });
+                    textEntity.setAttribute('position', `${textX} 0.04 ${textY}`); // Збільшений Z-офсет
+                    textEntity.setAttribute('rotation', '-90 0 0');
+                    this.el.appendChild(textEntity);
+                    this.angleTextEntities.push(textEntity);
+                },
+
+                addVertexLabel: function(vertexOrIndex, labelText, color = '#000000') {
+                    let vertex;
+                    if (typeof vertexOrIndex === 'number') {
+                        if (vertexOrIndex < 0 || vertexOrIndex >= this.vertices.length) return;
+                        vertex = this.vertices[vertexOrIndex];
+                    } else {
+                        vertex = vertexOrIndex; 
+                    }
+
+                    const labelOffset = 0.15; // Невеликий відступ від вершини
+                    const labelEntity = document.createElement('a-entity');
+                    labelEntity.setAttribute('text', {
+                        value: labelText,
+                        align: 'center',
+                        color: color,
+                        width: 0.5, // Збільшена ширина тексту
+                        wrapCount: 10
+                    });
+                    labelEntity.setAttribute('position', `${vertex.x + labelOffset} 0.04 ${vertex.y + labelOffset}`); // Збільшений Z-офсет
+                    labelEntity.setAttribute('rotation', '-90 0 0');
+                    proofElementsContainer.appendChild(labelEntity); // Додаємо до proof-elements-container
+                    this.vertexLabelEntities.push(labelEntity);
+                },
+
+                // Малює дугу кута з довільними початковим та кінцевим кутами
+                drawAngleArc: function(center, startAngleRad, endAngleRad, radius, color, label = '') {
+                    const angleArc = document.createElement('a-entity');
+                    let startDeg = THREE.MathUtils.radToDeg(startAngleRad);
+                    let endDeg = THREE.MathUtils.radToDeg(endAngleRad);
+
+                    let thetaLength = endDeg - startDeg;
+                    if (thetaLength < 0) thetaLength += 360; 
+
+                    angleArc.setAttribute('geometry', {
+                        primitive: 'ring',
+                        radiusInner: radius,
+                        radiusOuter: radius + 0.08, // Збільшена товщина
+                        thetaStart: startDeg,
+                        thetaLength: thetaLength
+                    });
+                    angleArc.setAttribute('material', `color: ${color}; opacity: 0.7;`); 
+                    angleArc.setAttribute('position', `${center.x} 0.03 ${center.y}`); // Збільшений Z-офсет
+                    angleArc.setAttribute('rotation', '-90 0 0');
+                    proofElementsContainer.appendChild(angleArc);
+                    this.angleHighlightEntities.push(angleArc);
+
+                    if (label) {
+                        const midAngle = startAngleRad + (thetaLength * Math.PI / 180 / 2); // Виправлено розрахунок середнього кута
+                        const textRadius = radius + 0.18; // Збільшено відстань тексту від центру
+                        const textX = center.x + textRadius * Math.cos(midAngle);
+                        const textY = center.y + textRadius * Math.sin(midAngle);
+
+                        const textEntity = document.createElement('a-entity');
+                        textEntity.setAttribute('text', {
+                            value: label,
+                            align: 'center',
+                            color: color,
+                            width: 0.5, // Збільшена ширина тексту
+                            wrapCount: 10
+                        });
+                        textEntity.setAttribute('position', `${textX} 0.04 ${textY}`); // Збільшений Z-офсет
+                        textEntity.setAttribute('rotation', '-90 0 0');
+                        proofElementsContainer.appendChild(textEntity);
+                        this.angleTextEntities.push(textEntity);
+                    }
+                },
+
+                // Малює лінію, що проходить через точку, з певним кутом нахилу
+                addLineFromPoint: function(point, angleRad, length, color, id = '', label = '') {
+                    const lineEntity = document.createElement('a-entity');
+                    lineEntity.setAttribute('geometry', {
+                        primitive: 'plane',
+                        width: length,
+                        height: 0.02 // Збільшена товщина лінії
+                    });
+                    lineEntity.setAttribute('material', `color: ${color}; transparent: true; opacity: 0.8`);
+                    lineEntity.setAttribute('position', `${point.x + length / 2 * Math.cos(angleRad - Math.PI) + length / 2 * Math.cos(angleRad) } 0.04 ${point.y + length / 2 * Math.sin(angleRad - Math.PI) + length / 2 * Math.sin(angleRad)}`);
+                    lineEntity.setAttribute('rotation', `-90 0 ${THREE.MathUtils.radToDeg(angleRad)}`);
+                    if (id) lineEntity.setAttribute('id', id);
+                    proofElementsContainer.appendChild(lineEntity);
+                    this.proofLines.push(lineEntity);
+
+                    if (label) {
+                        const labelOffset = 0.2; // Відступ для мітки
+                        const labelX = point.x + (length / 2) * Math.cos(angleRad) + labelOffset * Math.cos(angleRad + Math.PI / 2);
+                        const labelY = point.y + (length / 2) * Math.sin(angleRad) + labelOffset * Math.sin(angleRad + Math.PI / 2);
+                        
+                        const labelEntity = document.createElement('a-entity');
+                        labelEntity.setAttribute('text', {
+                            value: label,
+                            align: 'center',
+                            color: color,
+                            width: 0.4, // Ширина тексту
+                            wrapCount: 10
+                        });
+                        labelEntity.setAttribute('position', `${labelX} 0.05 ${labelY}`); // Збільшений Z-офсет
+                        labelEntity.setAttribute('rotation', '-90 0 0');
+                        proofElementsContainer.appendChild(labelEntity);
+                        this.proofLines.push(labelEntity); 
+                    }
+                },
+
+                // Малює лінію між двома точками
+                addLineBetweenPoints: function(startPoint, endPoint, color, id = '', label = '') {
+                    const length = startPoint.distanceTo(endPoint);
+                    const midPoint = new THREE.Vector2().addVectors(startPoint, endPoint).multiplyScalar(0.5);
+                    const angle = Math.atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x);
+
+                    const lineEntity = document.createElement('a-entity');
+                    lineEntity.setAttribute('geometry', {
+                        primitive: 'plane',
+                        width: length,
+                        height: 0.02 // Збільшена товщина лінії
+                    });
+                    lineEntity.setAttribute('material', `color: ${color}; transparent: true; opacity: 0.8`);
+                    lineEntity.setAttribute('position', `${midPoint.x} 0.04 ${midPoint.y}`); // Збільшений Z-офсет
+                    lineEntity.setAttribute('rotation', `-90 0 ${THREE.MathUtils.radToDeg(angle)}`);
+                    if (id) lineEntity.setAttribute('id', id);
+                    proofElementsContainer.appendChild(lineEntity);
+                    this.proofLines.push(lineEntity);
+
+                    if (label) {
+                        const labelOffset = 0.15; // Відступ для мітки
+                        const labelX = midPoint.x + labelOffset * Math.cos(angle + Math.PI / 2); 
+                        const labelY = midPoint.y + labelOffset * Math.sin(angle + Math.PI / 2);
+                        const labelEntity = document.createElement('a-entity');
+                        labelEntity.setAttribute('text', {
+                            value: label,
+                            align: 'center',
+                            color: color,
+                            width: 0.4,
+                            wrapCount: 10
+                        });
+                        labelEntity.setAttribute('position', `${labelX} 0.05 ${labelY}`); // Збільшений Z-офсет
+                        labelEntity.setAttribute('rotation', '-90 0 0');
+                        proofElementsContainer.appendChild(labelEntity);
+                        this.proofLines.push(labelEntity);
+                    }
+                },
+                
+                createPolygon: function() {
+                    const data = this.data;
+                    const el = this.el;
+                    
+                    el.innerHTML = '';
+                    
+                    const vertices = [];
+                    const isRegular = data.customSides.length === 0 || polygonTypeSelect.value === 'regular';
+                    
+                    if (isRegular) {
+                        const radius = data.size / (2 * Math.sin(Math.PI / data.numSides));
+                        const angleOffset = Math.PI / 2; 
+
+                        for (let i = 0; i < data.numSides; i++) {
+                            const angle = i * (2 * Math.PI) / data.numSides + angleOffset;
+                            const x = radius * Math.cos(angle);
+                            const y = radius * Math.sin(angle);
+                            vertices.push(new THREE.Vector2(x, y));
+                        }
+                    } else {
+                        vertices.push(new THREE.Vector2(0, 0));
+                        let currentAngleRad = 0;
+
+                        for (let i = 0; i < data.numSides; i++) {
+                            const sideLength = data.customSides[i];
+                            const internalAngleDeg = data.customAngles[i];
+
+                            if (i > 0) {
+                                currentAngleRad += (Math.PI - (internalAngleDeg * Math.PI / 180));
+                            }
+                            
+                            const prevVertex = vertices[vertices.length - 1];
+                            const nextX = prevVertex.x + sideLength * Math.cos(currentAngleRad);
+                            const nextY = prevVertex.y + sideLength * Math.sin(currentAngleRad);
+                            
+                            vertices.push(new THREE.Vector2(nextX, nextY));
+                        }
+                        vertices.pop(); 
+
+                        const centroid = new THREE.Vector2();
+                        for (let i = 0; i < vertices.length; i++) {
+                            centroid.x += vertices[i].x;
+                            centroid.y += vertices[i].y;
+                        }
+                        centroid.x /= vertices.length;
+                        centroid.y /= vertices.length;
+
+                        for (let i = 0; i < vertices.length; i++) {
+                            vertices[i].x -= centroid.x;
+                            vertices[i].y -= centroid.y;
+                        }
+                    }
+                    this.vertices = vertices;
+
+                    const shape = new THREE.Shape();
+                    shape.moveTo(vertices[0].x, vertices[0].y);
+                    for (let i = 1; i < vertices.length; i++) {
+                        shape.lineTo(vertices[i].x, vertices[i].y);
+                    }
+                    shape.lineTo(vertices[0].x, vertices[0].y);
+                    
+                    let geometry;
+                    const minDepth = 0.01;
+                    const extraDepth = data.extraThickShape ? 0.1 : 0;
+                    const finalDepth = minDepth + extraDepth;
+
+                    if (finalDepth > 0) {
+                        const extrudeSettings = {
+                            steps: 1,
+                            depth: finalDepth,
+                            bevelEnabled: false
+                        };
+                        geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                    } else {
+                        geometry = new THREE.ShapeGeometry(shape);
+                    }
+
+                    const material = new THREE.MeshStandardMaterial({
+                        color: new THREE.Color(this.originalFillColor), // Використовуємо оригінальний колір
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.95,
+                        roughness: 0.7,
+                        metalness: 0.0
+                    });
+                    
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.rotation.x = -Math.PI / 2;
+                    
+                    const edges = new THREE.EdgesGeometry(geometry);
+                    const lineMaterial = new THREE.LineBasicMaterial({
+                        color: new THREE.Color(this.originalLineColor), // Використовуємо оригінальний колір
+                        linewidth: 1
+                    });
+                    const line = new THREE.LineSegments(edges, lineMaterial);
+                    line.rotation.x = -Math.PI / 2;
+                    
+                    const group = new THREE.Group();
+                    group.add(mesh);
+                    group.add(line);
+                    
+                    el.setObject3D('mesh', group);
+                    
+                    if (data.showMeasurements) {
+                        this.addMeasurements(vertices, isRegular);
+                    }
+
+                    if (!isRegular) {
+                        this.calculateAndDisplayCustomArea(vertices);
+                    }
+                }
+            });
+
+            AFRAME.registerComponent('draggable', {
+                init: function () {
+                    this.el.addEventListener('mousedown', this.onMouseDown.bind(this));
+                    this.el.addEventListener('mouseup', this.onMouseUp.bind(this));
+                    this.el.sceneEl.addEventListener('mousemove', this.onMouseMove.bind(this));
+                    
+                    this.isDragging = false;
+                    this.startPoint = new THREE.Vector3();
+                    this.currentPlane = new THREE.Plane();
+                    this.intersection = new THREE.Vector3();
+                    this.cameraEl = this.el.sceneEl.querySelector('[camera]');
+                },
+
+                onMouseDown: function (evt) {
+                    if (!document.getElementById('draggingEnabled').checked) return;
+                    this.isDragging = true;
+                    this.cameraEl.setAttribute('orbit-controls', {enabled: false});
+                    this.cameraEl.setAttribute('look-controls', {enabled: false});
+
+                    const position = this.el.object3D.position;
+                    this.currentPlane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, 1, 0), position);
+                    
+                    const raycaster = this.el.sceneEl.components.raycaster.raycaster;
+                    if (raycaster) {
+                        raycaster.ray.intersectPlane(this.currentPlane, this.startPoint);
+                    }
+                },
+
+                onMouseUp: function () {
+                    this.isDragging = false;
+                    this.cameraEl.setAttribute('orbit-controls', {enabled: true});
+                    this.cameraEl.setAttribute('look-controls', {enabled: true});
+                },
+
+                onMouseMove: function (evt) {
+                    if (!this.isDragging) return;
+
+                    const raycaster = this.el.sceneEl.components.raycaster.raycaster;
+                    if (raycaster) {
+                        raycaster.ray.intersectPlane(this.currentPlane, this.intersection);
+
+                        if (this.intersection) {
+                            const offset = this.intersection.clone().sub(this.startPoint);
+                            
+                            const currentPos = this.el.getAttribute('position');
+                            this.el.setAttribute('position', {
+                                x: currentPos.x + offset.x,
+                                y: currentPos.y + offset.y,
+                                z: currentPos.z + offset.z
+                            });
+                            this.startPoint.copy(this.intersection);
+                        }
+                    }
+                }
+            });
+
+            createPolygon();
+        });
+    </script>
+</body>
+</html>

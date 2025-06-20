@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Віртуальна планіметрична майстерня</title>
+  <script src="assets/aframe/aframe-1.7.0.min.js"></script>
+  <script src="assets/aframe/aframe-orbit-controls-1.3.2.js"></script>
+  <script src="assets/js/aframe-components.js"></script>
+  <script src="assets/js/demo.js"></script>
+  <link rel="stylesheet" href="assets/css/demo.css">
+</head>
+<body>
+  <!-- Панель керування -->
+  <div id="controller">
+    <h2>Конструктор многокутника</h2>
+    <label>К-сть сторін:</label>
+    <span id="sides-label">5</span>
+    <input
+      id="shape-sides"
+      type="range"
+      min="3"
+      max="9"
+      value="5"
+      oninput="onChangeShapeSides(this.value);">
+    <label>Розмір:</label>
+    <input
+      id="shape-size"
+      type="range"
+      min="1"
+      max="12"
+      value="4"
+      oninput="onChangeShapeRadius(this.value);">
+    </br>
+    <label style="font-size: 16px;">Довжина сторони:</label>
+    <span id="edge-value" style="font-size: 16px;">4</span>
+    </br>
+    <label 
+      onmouseenter="onChangeShapeShowCoals(true);"
+      onmouseleave="onChangeShapeShowCoals(false);"
+      onclick="onChangeShapeShowCoalsRevers();"
+      style="font-size: 16px;"
+    >Підсвітити кути</label>
+    </br>
+    <label style="font-size: 16px;">Кут:</label>
+    <span id="coal-value" style="font-size: 16px;">72</span>
+    </br>
+    <label style="font-size: 16px;">Площа:</label>
+    <span id="squre-value" style="font-size: 16px;">27.53</span>
+  </div>
+
+  <!-- A-Frame сцена (створення сцени) -->
+  <a-scene>
+    <a-entity
+      id="shape-presentation"
+      regular-ngon="sides: 5; radius: 4;"
+      rotation="0 0 0">
+    </a-entity>
+    <a-entity
+      camera="fov: 75"
+      look-controls="enabled: false"
+      orbit-controls="target: 0 0 0; initialPosition: 1 5 9; rotateSpeed: 2.0;">
+    </a-entity>
+  </a-scene>
+</body>
+</html>

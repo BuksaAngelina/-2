@@ -1,0 +1,46 @@
+body {
+    margin: 0;
+    font-family: Arial;
+}
+
+#controller,
+#menu-panel, #prism-panel, #pyramid-panel {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1px;
+    font-size: 12px;
+    max-width: 320px;
+    z-index: 999;
+}
+
+#results { margin-top: 8px; }
+button {
+    margin: 3px;
+    padding: 4px 8px;
+    font-size: 12px;
+}
+select, input {
+    margin: 3px 0;
+    width: 100%;
+    font-size: 12px;
+}
+label { font-size: 12px; }
+.hidden { display: none; }
+@media (max-width: 600px) {
+    #menu-panel, #prism-panel, #pyramid-panel {
+    padding: 8px;
+    font-size: 12px;
+    max-width: 180px;
+    }
+    button {
+    padding: 3px 6px;
+    font-size: 10px;
+    }
+    select, input {
+    font-size: 10px;
+    }
+    label { font-size: 10px; }
+    h2 { font-size: 14px; margin: 0 0 5px; }
+}
