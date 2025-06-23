@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Технічна документація: Планіметрична лабораторія</title>
+    <style>
+        /* Глобальні стилі - скопійовані з вашого основного файлу */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f9f9f9;
+        }
+        
+        .container {
+            max-width: 900px; /* Трохи менше для документації */
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Стилі для заголовка сторінки */
+        .page-header {
+            text-align: center;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .page-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .page-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Стилі для карток (розділів) */
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 25px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header h2 {
+            margin-left: 10px;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Стилі для кнопок */
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            margin: 5px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn-back {
+            background-color: #6c757d;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        /* Стилі для контенту технічної документації */
+        .tech-docs-content h3 {
+            color: var(--dark-color);
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-size: 1.15rem;
+            border-bottom: 1px solid var(--light-color);
+            padding-bottom: 5px;
+        }
+        .tech-docs-content h4 {
+            color: var(--secondary-color);
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        .tech-docs-content p {
+            margin-bottom: 10px;
+        }
+        .tech-docs-content ul {
+            list-style-type: disc;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        .tech-docs-content ol {
+            list-style-type: decimal;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        .tech-docs-content li {
+            margin-bottom: 5px;
+        }
+        .tech-docs-content strong {
+            color: var(--dark-color);
+        }
+        .code-block {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-left: 4px solid var(--primary-color);
+            padding: 10px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            border-radius: 4px;
+        }
+
+        /* Адаптивність */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            .page-header p {
+                font-size: 0.9rem;
+            }
+            .card-header {
+                font-size: 1rem;
+            }
+            .card-body {
+                padding: 15px;
+            }
+            .tech-docs-content ul, .tech-docs-content ol {
+                margin-left: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>⚙️ Технічна документація</h1>
+            <p>Планіметрична лабораторія</p>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="../index.html" class="btn btn-back">⬅️ Повернутися на головну</a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>1. Загальна інформація про проєкт</h2>
+            </div>
+            <div class="card-body tech-docs-content">
+                <p><strong>Назва проєкту</strong>: Планіметрична лабораторія</p>
+                <p><strong>Опис</strong>: Веб-додаток для інтерактивного вивчення планіметрії, що дозволяє створювати, візуалізувати та досліджувати 2D-багатокутники в 3D-просторі. Застосунок надає можливості для налаштування параметрів фігур, відображення вимірів, трансформації та інтерактивного вивчення геометричних теорем.</p>
+                <p><strong>Цільова аудиторія</strong>: Учні 8-11-х класів, студенти математичних спеціальностей, викладачі геометрії та всі, хто цікавиться стереометрією.</p>
+                <p><strong>Платформа</strong>: Веб-додаток, працює на всіх сучасних пристроях: ПК, ноутбуках, планшетах та смартфонах з підтримкою WebGL.</p>
+                <p><strong>Технології</strong>:</p>
+                <ul>
+                    <li><strong>HTML5</strong>: Основна розмітка та структура веб-сторінки.</li>
+                    <li><strong>CSS3</strong>: Стилізація інтерфейсу користувача та адаптивний дизайн.</li>
+                    <li><strong>JavaScript (ES6+)</strong>: Основна логіка застосунку, обчислення, керування 3D-сценою та взаємодія з користувачем.</li>
+                    <li><strong>A-Frame</strong>: Веб-фреймворк для створення 3D/VR досвіду в браузері. Використовується для декларативного визначення 3D-сцени, об'єктів та їх властивостей.</li>
+                    <li><strong>Three.js</strong>: Базова бібліотека 3D-графіки, на якій побудований A-Frame. Використовується A-Frame для рендерингу.</li>
+                    <li><strong>WebGL</strong>: Низькорівневий API для рендерингу інтерактивної 2D і 3D графіки у будь-якому сумісному веб-браузері без використання плагінів.</li>
+                    <li><strong>A-Frame Orbit Controls</strong>: Сторонній компонент A-Frame для зручного керування камерою (обертання, масштабування) навколо точки інтересу.</li>
+                    <li><strong>MathJax</strong>: JavaScript бібліотека для високоякісного рендерингу математичних формул (LaTeX, MathML) у веб-сторінці.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>2. Архітектура застосунку</h2>
+            </div>
+            <div class="card-body tech-docs-content">
+                <p>Застосунок має клієнт-серверну архітектуру, де вся логіка та візуалізація виконуються на стороні клієнта (в браузері користувача), що забезпечує швидкий відгук та незалежність від серверних ресурсів для основної функціональності.</p>
+                <h3>2.1. Структура DOM та UI</h3>
+                <ul>
+                    <li><strong>Головний контейнер (<code>#main-container</code>)</strong>: Містить усю сторінку.</li>
+                    <li><strong>Секція контенту (<code>#content-section</code>)</strong>: Основна секція, що займає 100% висоти viewport. Містить панель керування та A-Frame сцену.</li>
+                    <li><strong>Панель керування (<code>#controls</code>)</strong>: Розташована як `position: fixed` елемент. Містить усі інтерактивні елементи форми: випадаючі списки, поля вводу для параметрів фігур, повзунки, чекбокси, кнопки. Забезпечує основну взаємодію користувача з 3D-моделями.</li>
+                </ul>
+                <h3>2.2. A-Frame Сцена (<code>&lt;a-scene&gt;</code>)</h3>
+                <p>Основне вікно 3D-візуалізації. Включає наступні сутності (entities):</p>
+                <ul>
+                    <li>**Камера**: Визначена з компонентами `orbit-controls` (для вільного обертання та масштабування) та `look-controls` (для керування оглядом, коли `orbit-controls` вимкнено).</li>
+                    <li>**Світлові джерела (<code>&lt;a-light&gt;</code>)**: Забезпечують освітлення 3D-сцени для правильного відображення об'єктів.</li>
+                    <li>**Контейнери для 3D-об'єктів**:
+                        <ul>
+                            <li><code>#polygons-container</code>: Основний контейнер, куди динамічно додаються та оновлюються 3D-моделі багатокутників.</li>
+                            <li><code>#proof-elements-container</code>: Контейнер для візуальних елементів, які з'являються під час доведення теорем (наприклад, допоміжні лінії, дуги кутів, текстові мітки).</li>
+                        </ul>
+                    </li>
+                    <li>**Площина основи (<code>&lt;a-plane&gt;</code>)**: Слугує візуальною "землею" для розміщення багатокутників.</li>
+                </ul>
+                <h3>2.3. JavaScript Логіка</h3>
+                <p>Код організований функціонально та поділений на наступні основні частини:</p>
+                <ul>
+                    <li>**Ініціалізація**: Виконується після завантаження DOM (<code>DOMContentLoaded</code>) та налаштовує початковий стан UI та 3D-сцени.</li>
+                    <li>**Обробники подій**: Функції, що реагують на дії користувача (зміна значень в полях вводу, натискання кнопок, зміна типу багатокутника тощо).</li>
+                    <li>**Функції побудови та оновлення 3D-моделей**: Головна функція <code>updatePolygon()</code>, яка збирає дані з UI та передає їх компоненту A-Frame для генерації або оновлення моделі.</li>
+                    <li>**A-Frame Компоненти**:
+                        <ul>
+                            <li><code>polygon-generator</code>: Основний кастомний компонент, який відповідає за створення геометрії багатокутника, його ліній, міток вимірів, дуг кутів та інших візуальних елементів.</li>
+                            <li><code>draggable</code>: Додатковий кастомний компонент, що дозволяє перетягувати 3D-об'єкти в площині XZ.</li>
+                        </ul>
+                    </li>
+                    <li>**Логіка доведення теорем**: Об'єкт `theorems` містить дані про кожен крок доведення. Функції `startProof()`, `showProofStep()`, `clearProofElements()` керують послідовністю та візуалізацією доказів.</li>
+                    <li>**Функції обчислень**: Допоміжні функції для розрахунку периметра, площі, кутів та інших геометричних властивостей.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>3. Основні компоненти та функціонал (JavaScript)</h2>
+            </div>
+            <div class="card-body tech-docs-content">
+                <h3>3.1. <code>polygon-generator</code> A-Frame Component</h3>
+                <p>Цей кастомний компонент є серцем візуалізації. Він реєструється в A-Frame та надає функціональність для:</p>
+                <ul>
+                    <li>**Властивості (<code>schema</code>)**: Визначає вхідні параметри, такі як `vertices` (масив координат вершин), `fillColor`, `lineColor`, `lineThickness`, `showMeasurements`, `highlightAngles`, `extraThick`, `polygonId`, `isProofMode`.</li>
+                    <li>**Ініціалізація (<code>init()</code>)**: Встановлює початкові значення, прив'язує посилання на DOM-елементи та викликає початкове оновлення.</li>
+                    <li>**Оновлення (<code>update()</code>)**: Спрацьовує при зміні будь-якої властивості `schema`. Відповідає за перемальовування багатокутника та всіх супутніх елементів.</li>
+                    <li>**Методи для малювання**:
+                        <ul>
+                            <li><code>generatePolygonGeometry()</code>: Створює плоску геометрію багатокутника на основі вершин.</li>
+                            <li><code>drawLines()</code>: Генерує лінії, що утворюють контур багатокутника.</li>
+                            <li><code>addMeasurementLabel()</code>: Додає текстові мітки для відображення довжин сторін.</li>
+                            <li><code>addAngleArc()</code>: Малює дуги для візуалізації кутів.</li>
+                            <li><code>addAngleText()</code>: Додає текстові мітки з градусами кутів.</li>
+                            <li><code>addVertexLabel()</code>: Розміщує мітки для вершин багатокутника.</li>
+                            <li><code>addLineFromPoint()</code>: Допоміжна функція для малювання окремих ліній, що використовуються в доведеннях.</li>
+                        </ul>
+                    </li>
+                    <li>**Методи для керування візуалізацією**:
+                        <ul>
+                            <li><code>dimPolygon()</code> / <code>restorePolygon()</code>: Змінюють прозорість багатокутника.</li>
+                            <li><code>getVertices()</code>: Повертає поточні координати вершин.</li>
+                            <li><code>highlightAngle()</code>: Виділяє певний кут.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>3.2. <code>draggable</code> A-Frame Component</h3>
+                <p>Цей компонент дозволяє користувачу перетягувати 3D-об'єкти (багатокутники) на площині XZ (горизонтально) за допомогою миші або торкання.</p>
+                <ul>
+                    <li>**Ініціалізація (<code>init()</code>)**: Налаштовує обробники подій `mousedown`, `mouseup`, `mousemove` на сцені. Також ініціалізує необхідні об'єкти Three.js для розрахунку перетинів (<code>THREE.Plane</code>, <code>THREE.Vector3</code>).</li>
+                    <li>**<code>onMouseDown(evt)</code>**: При натисканні миші перевіряє, чи увімкнено перетягування. Якщо так, встановлює флаг `isDragging` у `true` та тимчасово вимикає стандартні керування камерою (<code>orbit-controls</code>, <code>look-controls</code>), щоб уникнути конфліктів. Визначає початкову точку перетину променя миші з площиною багатокутника.</li>
+                    <li>**<code>onMouseUp()</code>**: При відпусканні миші встановлює `isDragging` у `false` та знову вмикає керування камерою.</li>
+                    <li>**<code>onMouseMove(evt)</code>**: Якщо `isDragging` є `true`, обчислює нову точку перетину променя миші з площиною та оновлює позицію 3D-об'єкта, створюючи ефект перетягування.</li>
+                </ul>
+
+                <h3>3.3. Глобальні функції та логіка UI</h3>
+                <ul>
+                    <li>**<code>updatePolygon()</code>**: Центральна функція, що викликається при зміні будь-яких параметрів багатокутника через UI. Вона зчитує всі значення з полів вводу та повзунків, виконує необхідні розрахунки (наприклад, координати вершин), а потім передає оновлені дані компоненту `polygon-generator` для перемальовування сцени.</li>
+                    <li>**<code>updateMeasurements()</code>**: Функція, що відповідає за обчислення та відображення геометричних характеристик поточного багатокутника (периметр, площа, сума кутів) у відповідному блоці UI. Вона використовує математичні формули залежно від типу багатокутника.</li>
+                    <li>**<code>setupCustomControls()</code>**: Динамічно генерує поля вводу для довжин сторін та кутів при виборі "Кастомного багатокутника". Це дозволяє адаптувати UI до кількості сторін, обраної користувачем.</li>
+                    <li>**<code>updatePolygonRotation()</code>**: Оновлює атрибут `rotation` для багатокутника, дозволяючи користувачеві обертати його вручну за допомогою повзунків.</li>
+                    <li>**Логіка теорем (об'єкт <code>theorems</code>)**: Об'єкт, що зберігає текстовий опис та інструкції для візуалізації кожного кроку доведення різних геометричних теорем. Функції `startProof()`, `showProofStep()`, `clearProofElements()` керують переходом між кроками доведення, динамічно додаючи або видаляючи допоміжні візуальні елементи на сцені.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>4. Структура файлів</h2>
+            </div>
+            <div class="card-body tech-docs-content">
+                <p>Проєкт є "single-page application" в рамках одного HTML-файлу, що робить його дуже простим для розгортання та перенесення. Однак, для документації, як-от ця, використовуються окремі файли.</p>
+                <h3>4.1. Головний файл (<code>index.html</code>)</h3>
+                <p>Містить основну структуру сторінки, включаючи:</p>
+                <ul>
+                    <li><code>&lt;!DOCTYPE html&gt;</code>, <code>&lt;head&gt;</code> (з мета-тегами, заголовком, підключенням зовнішніх бібліотек MathJax, A-Frame та CSS-стилів).</li>
+                    <li><code>&lt;body&gt;</code>:
+                        <ul>
+                            <li><code>&lt;div id="main-container"&gt;</code>: Головний контейнер макету.</li>
+                            <li><code>&lt;div id="content-section"&gt;</code>: Розділ для 3D-сцени та панелі керування.</li>
+                            <li><code>&lt;div id="controls"&gt;</code>: Панель UI-контролів.</li>
+                            <li><code>&lt;a-scene&gt;</code>: A-Frame 3D-сцена.</li>
+                            <li>Увесь JavaScript-код застосунку, включаючи компоненти A-Frame та логіку UI, розміщений у єдиному <code>&lt;script&gt;</code> тезі в кінці <code>&lt;body&gt;</code>.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <h3>4.2. Документація (папка <code>docs/</code>)</h3>
+                <p>Окремі HTML-файли для документації, розміщені в підкаталозі `docs/` для кращої організації:</p>
+                <ul>
+                    <li><code>docs/user-guide.html</code>: Посібник користувача.</li>
+                    <li><code>docs/teacher-guide.html</code>: Посібник викладача.</li>
+                    <li><code>docs/tech-docs.html</code>: Цей файл, що містить повну технічну документацію.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>5. Потік виконання</h2>
+            </div>
+            <div class="card-body tech-docs-content">
+                <ol>
+                    <li><strong>Завантаження сторінки</strong>: Веб-браузер завантажує HTML-документ. Паралельно завантажуються зовнішні CSS-файли (якщо є, в даному випадку CSS вбудований) та JavaScript-бібліотеки (A-Frame, MathJax) з CDN.</li>
+                    <li><strong>Ініціалізація A-Frame</strong>: Після завантаження A-Frame ініціалізує WebGL-контекст, створює 3D-сцену, камеру, світлові джерела та інші базові елементи, визначені у <code>&lt;a-scene&gt;</code>.</li>
+                    <li><strong>`DOMContentLoaded`</strong>: Коли DOM-дерево повністю завантажене, спрацьовує основний JavaScript-код застосунку. Він ініціалізує слухачів подій для всіх UI-елементів (кнопки, повзунки, поля вводу).</li>
+                    <li><strong>Початковий багатокутник</strong>: Функція <code>updatePolygon()</code> викликається для відображення багатокутника за замовчуванням відповідно до початкових значень у UI.</li>
+                    <li><strong>Взаємодія користувача</strong>:
+                        <ul>
+                            <li>Користувач змінює параметри у панелі керування: спрацьовують відповідні обробники подій, які викликають <code>updatePolygon()</code> для перемальовування фігури та <code>updateMeasurements()</code> для оновлення характеристик.</li>
+                            <li>Користувач обирає теорему: викликається <code>startProof()</code>, а потім <code>showProofStep()</code> для навігації доведенням.</li>
+                            <li>Користувач перетягує фігуру: активується компонент <code>draggable</code>.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Рендеринг</strong>: A-Frame безперервно рендерить 3D-сцену, оновлюючи візуалізацію в реальному часі відповідно до змін, викликаних взаємодією користувача.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>6. Обмеження та можливі покращення</h2>
+            </div>
+            <div class="card-body tech-docs-content">
+                <h3>6.1. Обмеження поточної реалізації</h3>
+                <ul>
+                    <li>**2D-фігури в 3D-просторі**: Проєкт зосереджений на візуалізації та маніпуляціях з 2D-багатокутниками, які розміщені в 3D-сцені. Це не повноцінний 3D-моделер.</li>
+                    <li>**Складні багатокутники**: Поточна реалізація може мати проблеми з коректним відображенням увігнутих або самоперетинаючихся багатокутників, особливо при ручному введенні координат або кутів.</li>
+                    <li>**Обчислення кутів для кастомних фігур**: Останній кут у кастомному багатокутнику обчислюється автоматично. Це може призвести до неочікуваних або вироджених форм, якщо попередні вхідні дані (сторони та кути) роблять геометрично неможливим замкнути фігуру.</li>
+                    <li>**Обмежена бібліотека теорем**: Наразі реалізовано лише невелику кількість демонстрацій теорем. Розширення функціоналу потребуватиме значної роботи з візуалізацією кожного кроку.</li>
+                    <li>**Продуктивність**: Для дуже великої кількості сторін (хоча обмежено 20) або складних візуальних ефектів може знадобитися подальша оптимізація рендерингу.</li>
+                    <li>**Масштабування UI**: Розмір тексту та елементів керування є відносно статичним і не завжди оптимально адаптується до всіх можливих роздільних здатностей екрану без додаткових CSS-правил.</li>
+                </ul>
+
+                <h3>6.2. Можливі покращення</h3>
+                <ul>
+                    <li>**Розширена бібліотека фігур**: Додавання можливості створення інших типів 2D-фігур (кола, еліпси, криві Без'є).</li>
+                    <li>**Більше теорем та доведень**: Розширення розділу доведень теорем, включаючи більш складні геометричні концепції та інтерактивні елементи для доказів.</li>
+                    <li>**Збереження/Завантаження конфігурацій**: Можливість зберігати поточні параметри багатокутника та стану доведення для подальшого використання.</li>
+                    <li>**Додаткові інструменти вимірювання**: Додавання інструментів для вимірювання відстаней між точками, площ частин фігур, площинних перерізів.</li>
+                    <li>**Підтримка AR/VR (розширена)**: Хоча A-Frame підтримує WebXR, можна розширити функціонал для більш глибокого інтерактивного досвіду в доповненій/віртуальній реальності.</li>
+                    <li>**Оптимізація коду**: Рефакторинг JavaScript-коду на модулі для покращення читабельності, підтримки та розширюваності.</li>
+                    <li>**Покращена валідація вводу**: Більш надійна перевірка введених користувачем значень для уникнення некоректних або вироджених фігур.</li>
+                    <li>**Мультимовність**: Додавання підтримки кількох мов для інтерфейсу та документації.</li>
+                    <li>**Тести**: Написання автоматизованих тестів для забезпечення коректності обчислень та візуалізації.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="author-info" style="margin-top: 40px; text-align: center;">
+            <p>Ця документація є частиною проєкту "Планіметрична лабораторія".</p>
+            <p>Автор: Букша Ангеліна Вікторівна</p>
+            <p>Рік: 2025</p>
+        </div>
+
+    </div>
+</body>
+</html>
+
